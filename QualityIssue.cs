@@ -21,4 +21,15 @@ public class QualityIssue
         Status = "Open";
         CreatedAt = DateTime.Now;
     }
+
+    public bool Close()
+    {
+        if (Status == "Closed")
+        {
+            return false;
+        }
+
+        Status = "Closed";
+        return true;
+    }
 }

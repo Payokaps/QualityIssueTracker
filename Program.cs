@@ -8,7 +8,8 @@ while (isRunning)
     Console.WriteLine("---------------------");
     Console.WriteLine("1. Create issue");
     Console.WriteLine("2. View issues");
-    Console.WriteLine("3. Exit");
+    Console.WriteLine("3. Close issue");
+    Console.WriteLine("4. Exit");
 
     Console.Write("\nSelect an option: ");
     string? option = Console.ReadLine();
@@ -24,12 +25,16 @@ while (isRunning)
             break;
 
         case "3":
+            CloseIssue(issues);
+            break;
+
+        case "4":
             isRunning = false;
             Console.WriteLine("Goodbye!");
             break;
 
         default:
-            Console.WriteLine("Invalid option. Please select 1, 2, or 3.");
+            Console.WriteLine("Invalid option. Please select 1, 2, 3, or 4.");
             break;
     }
 }
@@ -78,6 +83,58 @@ static void DisplayIssues(List<QualityIssue> issues)
     }
 
     Console.WriteLine($"\nTotal issues: {issues.Count}");
+}
+
+static void CloseIssue(List<QualityIssue> issues)
+{
+    Console.WriteLine("\nCLOSE QUALITY ISSUE");
+    Console.WriteLine("-------------------");
+
+    if (issues.Count == 0)
+    {
+        Console.WriteLine("No quality issues are available to close.");
+        return;
+    }
+
+    int issueId = ReadIssueId();
+
+    QualityIssue? matchingIssue =
+        issues.FirstOrDefault(issue => issue.Id == issueId);
+
+    if (matchingIssue is null)
+    {
+        Console.WriteLine($"Issue #{issueId} was not found.");
+        return;
+    }
+
+    bool wasClosed = matchingIssue.Close();
+
+    if (wasClosed)
+    {
+        Console.WriteLine($"Issue #{matchingIssue.Id} was closed successfully.");
+    }
+    else
+    {
+        Console.WriteLine($"Issue #{matchingIssue.Id} is already closed.");
+    }
+}
+
+static int ReadIssueId()
+{
+    while (true)
+    {
+        Console.Write("Enter the issue ID: ");
+        string? idText = Console.ReadLine();
+
+        bool isNumber = int.TryParse(idText, out int issueId);
+
+        if (isNumber && issueId > 0)
+        {
+            return issueId;
+        }
+
+        Console.WriteLine("The ID must be a positive whole number.");
+    }
 }
 
 static string ReadRequiredText(string prompt)
