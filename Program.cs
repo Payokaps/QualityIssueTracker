@@ -21,7 +21,7 @@ while (isRunning)
             break;
 
         case "2":
-            DisplayIssues(issues);
+            DisplayIssuesMenu(issues);
             break;
 
         case "3":
@@ -62,18 +62,63 @@ static void CreateIssue(List<QualityIssue> issues)
     Console.WriteLine($"Issues currently in memory: {issues.Count}");
 }
 
-static void DisplayIssues(List<QualityIssue> issues)
+static void DisplayIssuesMenu(List<QualityIssue> issues)
 {
-    Console.WriteLine("\nQUALITY ISSUES");
-    Console.WriteLine("--------------");
+    Console.WriteLine("\nVIEW QUALITY ISSUES");
+    Console.WriteLine("-------------------");
+    Console.WriteLine("1. View all issues");
+    Console.WriteLine("2. View open issues");
+    Console.WriteLine("3. View closed issues");
+    Console.WriteLine("4. Return to main menu");
 
-    if (issues.Count == 0)
+    Console.Write("\nSelect a filter: ");
+    string? filterOption = Console.ReadLine();
+
+    switch (filterOption)
     {
-        Console.WriteLine("No quality issues have been created.");
+        case "1":
+            DisplayIssueList(issues, "ALL QUALITY ISSUES");
+            break;
+
+        case "2":
+            List<QualityIssue> openIssues = issues
+                .Where(issue => issue.Status == "Open")
+                .ToList();
+
+            DisplayIssueList(openIssues, "OPEN QUALITY ISSUES");
+            break;
+
+        case "3":
+            List<QualityIssue> closedIssues = issues
+                .Where(issue => issue.Status == "Closed")
+                .ToList();
+
+            DisplayIssueList(closedIssues, "CLOSED QUALITY ISSUES");
+            break;
+
+        case "4":
+            return;
+
+        default:
+            Console.WriteLine("Invalid filter option.");
+            break;
+    }
+}
+
+static void DisplayIssueList(
+    List<QualityIssue> issuesToDisplay,
+    string heading)
+{
+    Console.WriteLine($"\n{heading}");
+    Console.WriteLine(new string('-', heading.Length));
+
+    if (issuesToDisplay.Count == 0)
+    {
+        Console.WriteLine("No matching quality issues were found.");
         return;
     }
 
-    foreach (QualityIssue issue in issues)
+    foreach (QualityIssue issue in issuesToDisplay)
     {
         Console.WriteLine($"\nID: {issue.Id}");
         Console.WriteLine($"Title: {issue.Title}");
@@ -82,7 +127,7 @@ static void DisplayIssues(List<QualityIssue> issues)
         Console.WriteLine($"Created: {issue.CreatedAt:g}");
     }
 
-    Console.WriteLine($"\nTotal issues: {issues.Count}");
+    Console.WriteLine($"\nTotal matching issues: {issuesToDisplay.Count}");
 }
 
 static void CloseIssue(List<QualityIssue> issues)
@@ -152,3 +197,4 @@ static string ReadRequiredText(string prompt)
         Console.WriteLine("This field cannot be empty. Please try again.");
     }
 }
+
