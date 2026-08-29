@@ -1,14 +1,16 @@
+using System.Text.Json.Serialization;
+
 public class QualityIssue
 {
-    public int Id { get; }
+    public int Id { get; private set; }
 
-    public string Title { get; }
+    public string Title { get; private set; }
 
-    public string Description { get; }
+    public string Description { get; private set; }
 
     public string Status { get; private set; }
 
-    public DateTime CreatedAt { get; }
+    public DateTime CreatedAt { get; private set; }
 
     public QualityIssue(
         int id,
@@ -20,6 +22,21 @@ public class QualityIssue
         Description = description;
         Status = "Open";
         CreatedAt = DateTime.Now;
+    }
+
+    [JsonConstructor]
+    public QualityIssue(
+        int id,
+        string title,
+        string description,
+        string status,
+        DateTime createdAt)
+    {
+        Id = id;
+        Title = title;
+        Description = description;
+        Status = status;
+        CreatedAt = createdAt;
     }
 
     public bool Close()

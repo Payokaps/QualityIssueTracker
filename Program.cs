@@ -1,4 +1,6 @@
-﻿List<QualityIssue> issues = new List<QualityIssue>();
+﻿List<QualityIssue> issues = IssueFileStorage.LoadIssues();
+
+Console.WriteLine($"Loaded issues: {issues.Count}");
 
 bool isRunning = true;
 
@@ -29,6 +31,7 @@ while (isRunning)
             break;
 
         case "4":
+            IssueFileStorage.SaveIssues(issues);
             isRunning = false;
             Console.WriteLine("Goodbye!");
             break;
@@ -47,7 +50,9 @@ static void CreateIssue(List<QualityIssue> issues)
     string title = ReadRequiredText("Title: ");
     string description = ReadRequiredText("Description: ");
 
-    int nextId = issues.Count + 1;
+    int nextId = issues.Count == 0
+        ? 1
+        : issues.Max(issue => issue.Id) + 1;
 
     QualityIssue issue = new QualityIssue(
         nextId,
@@ -56,10 +61,16 @@ static void CreateIssue(List<QualityIssue> issues)
 
     issues.Add(issue);
 
+    bool wasSaved = IssueFileStorage.SaveIssues(issues);
+
     Console.WriteLine($"\nIssue #{issue.Id} created successfully.");
     Console.WriteLine($"Status: {issue.Status}");
     Console.WriteLine($"Created: {issue.CreatedAt:g}");
-    Console.WriteLine($"Issues currently in memory: {issues.Count}");
+
+    if (wasSaved)
+    {
+        Console.WriteLine("Changes saved to issues.json.");
+    }
 }
 
 static void DisplayIssuesMenu(List<QualityIssue> issues)
@@ -154,13 +165,19 @@ static void CloseIssue(List<QualityIssue> issues)
 
     bool wasClosed = matchingIssue.Close();
 
-    if (wasClosed)
-    {
-        Console.WriteLine($"Issue #{matchingIssue.Id} was closed successfully.");
-    }
-    else
+    if (!wasClosed)
     {
         Console.WriteLine($"Issue #{matchingIssue.Id} is already closed.");
+        return;
+    }
+
+    bool wasSaved = IssueFileStorage.SaveIssues(issues);
+
+    Console.WriteLine($"Issue #{matchingIssue.Id} was closed successfully.");
+
+    if (wasSaved)
+    {
+        Console.WriteLine("Changes saved to issues.json.");
     }
 }
 
@@ -197,4 +214,3 @@ static string ReadRequiredText(string prompt)
         Console.WriteLine("This field cannot be empty. Please try again.");
     }
 }
-
