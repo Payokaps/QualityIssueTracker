@@ -20,7 +20,7 @@ while (isRunning)
             break;
 
         case "2":
-            ShowViewIssuesMessage();
+            DisplayIssues(issues);
             break;
 
         case "3":
@@ -57,6 +57,29 @@ static void CreateIssue(List<QualityIssue> issues)
     Console.WriteLine($"Issues currently in memory: {issues.Count}");
 }
 
+static void DisplayIssues(List<QualityIssue> issues)
+{
+    Console.WriteLine("\nQUALITY ISSUES");
+    Console.WriteLine("--------------");
+
+    if (issues.Count == 0)
+    {
+        Console.WriteLine("No quality issues have been created.");
+        return;
+    }
+
+    foreach (QualityIssue issue in issues)
+    {
+        Console.WriteLine($"\nID: {issue.Id}");
+        Console.WriteLine($"Title: {issue.Title}");
+        Console.WriteLine($"Description: {issue.Description}");
+        Console.WriteLine($"Status: {issue.Status}");
+        Console.WriteLine($"Created: {issue.CreatedAt:g}");
+    }
+
+    Console.WriteLine($"\nTotal issues: {issues.Count}");
+}
+
 static string ReadRequiredText(string prompt)
 {
     while (true)
@@ -71,9 +94,4 @@ static string ReadRequiredText(string prompt)
 
         Console.WriteLine("This field cannot be empty. Please try again.");
     }
-}
-
-static void ShowViewIssuesMessage()
-{
-    Console.WriteLine("\nView issues functionality is coming soon.");
 }
