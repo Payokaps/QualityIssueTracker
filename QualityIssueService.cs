@@ -52,6 +52,22 @@ public class QualityIssueService
             .FirstOrDefault(issue => issue.Id == issueId);
     }
 
+    public bool UpdateIssue(
+        int issueId,
+        string title,
+        string description)
+    {
+        QualityIssue? issue = FindIssueById(issueId);
+
+        if (issue is null)
+        {
+            return false;
+        }
+
+        issue.UpdateDetails(title, description);
+        return true;
+    }
+
     public CloseIssueResult CloseIssue(int issueId)
     {
         QualityIssue? issue = FindIssueById(issueId);
