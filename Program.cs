@@ -1,4 +1,6 @@
-﻿bool isRunning = true;
+﻿List<QualityIssue> issues = new List<QualityIssue>();
+
+bool isRunning = true;
 
 while (isRunning)
 {
@@ -14,7 +16,7 @@ while (isRunning)
     switch (option)
     {
         case "1":
-            ShowCreateIssueMessage();
+            CreateIssue(issues);
             break;
 
         case "2":
@@ -32,9 +34,43 @@ while (isRunning)
     }
 }
 
-static void ShowCreateIssueMessage()
+static void CreateIssue(List<QualityIssue> issues)
 {
-    Console.WriteLine("\nCreate issue functionality is coming next.");
+    Console.WriteLine("\nCREATE QUALITY ISSUE");
+    Console.WriteLine("--------------------");
+
+    string title = ReadRequiredText("Title: ");
+    string description = ReadRequiredText("Description: ");
+
+    int nextId = issues.Count + 1;
+
+    QualityIssue issue = new QualityIssue(
+        nextId,
+        title,
+        description);
+
+    issues.Add(issue);
+
+    Console.WriteLine($"\nIssue #{issue.Id} created successfully.");
+    Console.WriteLine($"Status: {issue.Status}");
+    Console.WriteLine($"Created: {issue.CreatedAt:g}");
+    Console.WriteLine($"Issues currently in memory: {issues.Count}");
+}
+
+static string ReadRequiredText(string prompt)
+{
+    while (true)
+    {
+        Console.Write(prompt);
+        string? value = Console.ReadLine();
+
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            return value.Trim();
+        }
+
+        Console.WriteLine("This field cannot be empty. Please try again.");
+    }
 }
 
 static void ShowViewIssuesMessage()
