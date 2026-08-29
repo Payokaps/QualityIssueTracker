@@ -39,6 +39,14 @@ public class QualityIssue
         CreatedAt = createdAt;
     }
 
+    public void UpdateDetails(
+        string title,
+        string description)
+    {
+        Title = title;
+        Description = description;
+    }
+
     public bool Close()
     {
         if (Status == "Closed")

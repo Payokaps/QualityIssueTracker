@@ -1,4 +1,5 @@
-﻿List<QualityIssue> savedIssues = IssueFileStorage.LoadIssues();
+﻿List<QualityIssue> savedIssues =
+    IssueFileStorage.LoadIssues();
 
 QualityIssueService issueService =
     new QualityIssueService(savedIssues);
@@ -15,7 +16,8 @@ while (isRunning)
     Console.WriteLine("1. Create issue");
     Console.WriteLine("2. View issues");
     Console.WriteLine("3. Close issue");
-    Console.WriteLine("4. Exit");
+    Console.WriteLine("4. Update issue");
+    Console.WriteLine("5. Exit");
 
     Console.Write("\nSelect an option: ");
     string? option = Console.ReadLine();
@@ -35,6 +37,10 @@ while (isRunning)
             break;
 
         case "4":
+            UpdateIssue(issueService);
+            break;
+
+        case "5":
             SaveIssues(issueService);
             isRunning = false;
             Console.WriteLine("Goodbye!");
@@ -42,7 +48,7 @@ while (isRunning)
 
         default:
             Console.WriteLine(
-                "Invalid option. Please select 1, 2, 3, or 4.");
+                "Invalid option. Please select 1, 2, 3, 4, or 5.");
             break;
     }
 }
@@ -53,7 +59,8 @@ static void CreateIssue(QualityIssueService issueService)
     Console.WriteLine("--------------------");
 
     string title = ReadRequiredText("Title: ");
-    string description = ReadRequiredText("Description: ");
+    string description =
+        ReadRequiredText("Description: ");
 
     QualityIssue issue =
         issueService.CreateIssue(title, description);
@@ -175,6 +182,64 @@ static void CloseIssue(QualityIssueService issueService)
             Console.WriteLine(
                 $"Issue #{issueId} is already closed.");
             break;
+    }
+}
+
+static void UpdateIssue(QualityIssueService issueService)
+{
+    Console.WriteLine("\nUPDATE QUALITY ISSUE");
+    Console.WriteLine("--------------------");
+
+    if (issueService.GetAllIssues().Count == 0)
+    {
+        Console.WriteLine(
+            "No quality issues are available to update.");
+        return;
+    }
+
+    int issueId = ReadIssueId();
+
+    QualityIssue? existingIssue =
+        issueService.FindIssueById(issueId);
+
+    if (existingIssue is null)
+    {
+        Console.WriteLine(
+            $"Issue #{issueId} was not found.");
+        return;
+    }
+
+    Console.WriteLine(
+        $"Current title: {existingIssue.Title}");
+    Console.WriteLine(
+        $"Current description: {existingIssue.Description}");
+
+    string newTitle =
+        ReadRequiredText("New title: ");
+
+    string newDescription =
+        ReadRequiredText("New description: ");
+
+    bool wasUpdated = issueService.UpdateIssue(
+        issueId,
+        newTitle,
+        newDescription);
+
+    if (!wasUpdated)
+    {
+        Console.WriteLine(
+            $"Issue #{issueId} could not be updated.");
+        return;
+    }
+
+    bool wasSaved = SaveIssues(issueService);
+
+    Console.WriteLine(
+        $"Issue #{issueId} was updated successfully.");
+
+    if (wasSaved)
+    {
+        Console.WriteLine("Changes saved to issues.json.");
     }
 }
 

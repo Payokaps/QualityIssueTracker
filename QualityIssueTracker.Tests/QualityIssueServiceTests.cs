@@ -56,6 +56,7 @@ public class QualityIssueServiceTests
             service.GetIssuesByStatus("Closed");
 
         QualityIssue result = Assert.Single(results);
+
         Assert.Equal(2, result.Id);
         Assert.Equal("Closed", result.Status);
     }
@@ -102,5 +103,42 @@ public class QualityIssueServiceTests
         Assert.Equal(
             CloseIssueResult.AlreadyClosed,
             result);
+    }
+
+    [Fact]
+    public void UpdateIssue_WhenIssueExists_UpdatesDetails()
+    {
+        QualityIssue issue = new QualityIssue(
+            1,
+            "Original title",
+            "Original description");
+
+        QualityIssueService service =
+            new QualityIssueService(new[] { issue });
+
+        bool result = service.UpdateIssue(
+            1,
+            "Updated title",
+            "Updated description");
+
+        Assert.True(result);
+        Assert.Equal("Updated title", issue.Title);
+        Assert.Equal(
+            "Updated description",
+            issue.Description);
+    }
+
+    [Fact]
+    public void UpdateIssue_WhenIdDoesNotExist_ReturnsFalse()
+    {
+        QualityIssueService service =
+            new QualityIssueService();
+
+        bool result = service.UpdateIssue(
+            99,
+            "Updated title",
+            "Updated description");
+
+        Assert.False(result);
     }
 }
